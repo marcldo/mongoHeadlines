@@ -25,42 +25,65 @@ app.use(express.json());
 app.use(express.static("public"));
 
 // connect to mongo db
-// const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
-// mongoose.connect(MONGODB_URI);
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+mongoose.connect(MONGODB_URI);
 
 //routes
 
-//GET rout for scraping wikiart.org
+//GET route for scraping indeed software developer jobs in ontario
 app.get("/scrape", (req, res) => {
     console.log("scraping")
     //grab the body of the html with axios
     axios.get("https://ca.indeed.com/jobs?q=software+developer&l=Toronto%2C+ON").then(function (response) {
         //load into cheerio
         const $ = cheerio.load(response.data);
-        const result = [];
+
         //
         $("div.jobsearch-SerpJobCard").each(function (i, element) {
+            let result = {};
+            result.title = $(element).find("a").attr("title");
+            result.link = "https://ca.indeed.com" + $(element).find("a").attr("href");
+            result.company = $(element).find("span.company").text().trim();
+            result.summary = $(element).find("li").text();
 
-            var title = $(element).find("a").attr("title");
-            var link = $(element).find("a").attr("href");
-            var company = $(element).find("span.company").text().trim();
-            var summary = $(element).find("li").text();
+            // Create a new Job using the `result` object built from scraping
+            db.Job.create(result)
+                .then(dbJob => console.log(dbJob))
+                .catch(err => console.log(err));
 
-            // Save these results in an object that we'll push into the results array we defined earlier
-            result.push({
-                title,
-                link: "https://ca.indeed.com" + link,
-                company,
-                summary
-
-            });
         });
-        console.log(result);
-        res.json(result);
+
+        res.send("Scrape Complete");
     });
 });
 
-app.listen(PORT, function () {
-    console.log("App running on port " + PORT + "!");
+
+
+//get all jobs from the db
+app.get("/jobs", (req, res) => {
+    db.Job.find({})
+        .then(dbJob => res.json(dbJob))
+        .catch(err => res.json(err));
 });
 
+//get jobs by id, populate it with note
+app.get("/jobs/:id", (req, res) => {
+    db.Job.findOne({ _id: req.params.id })
+        // populate all of the notes associated with it
+        .populate("note")
+        //if we are able to find a job then send back to client
+        .then((dbJob) => res.json(dbJob))
+        .catch(err => res.json(err));
+});
+
+// route for saving and updating a jobs associated note
+app.post("/jobs/:id", (req, res) => {
+    //create a new note and pass the req.body to the entry
+    db.Note.create(req.body)
+        .then(dbNote => db.Job.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true }))
+        .then(dbJob => res.json(dbJob))
+        .catch(err => res.json(err));
+});
+
+//Start the server
+app.listen(PORT, () => console.log("App running on port " + PORT + "!"));
