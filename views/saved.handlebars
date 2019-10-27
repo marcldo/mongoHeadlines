@@ -1,4 +1,4 @@
-<h1>Saved Jobs</h1>
+<h4>Saved Jobs</h4>
 
 <ul>
     {{#each jobs}}
@@ -6,5 +6,6 @@
     <li>{{company}}</li>
     <li>{{summary}}</li>
     <button class="add-note" data-id="{{_id}}">Add Note</button>
+    <button class="delete" data-id="{{_id}}">Delete</button>
     {{/each}}
 </ul>

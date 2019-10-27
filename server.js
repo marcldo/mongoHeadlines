@@ -24,6 +24,7 @@ app.set('view engine', 'handlebars');
 // app.use(logger("dev"));
 //make public directory
 app.use(express.static(__dirname + '/public'));
+app.use(express.static('/images'));
 //parse request body as JSON
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -60,7 +61,7 @@ app.get("/scrape", (req, res) => {
 
             // Create a new Job using the `result` object built from scraping
             db.Job.create(result)
-                .then(dbJob => console.log(dbJob))
+                .then(dbJob => res.json(dbJob))
                 .catch(err => console.log(err));
 
         });
@@ -100,17 +101,32 @@ app.post("/jobs/:id", (req, res) => {
 
 //save job
 app.get("/save/:id", (req, res) => {
-    console.log("route" + req.params.id)
+    console.log("saved " + req.params.id)
     db.Job.updateOne({ _id: req.params.id }, { $set: { saved: true } })
         .then(savedJob => console.log(savedJob))
         .catch(err => res.json(err));
 });
+//delete saved job
+app.get("/delete-saved/:id", (req, res) => {
+    console.log("delete " + req.params.id)
+    db.Job.updateOne({ _id: req.params.id }, { $set: { saved: false } })
+        .then(savedJob => console.log(savedJob))
+        .catch(err => res.json(err));
+});
 
+// get all saved jobs
 app.get("/saved", (req, res) => {
     db.Job.find({ saved: true })
         .then(savedJobs => res.render("saved", { jobs: savedJobs }))
         .catch(err => res.json(err))
-})
+});
+
+// delete all jobs
+app.get("/delete-all", (req, res) => {
+    db.Job.deleteMany({})
+        .then(console.log("deleted"))
+        .catch(err => res.json(err));
+});
 
 //Start the server
 app.listen(PORT, () => console.log("App running on port " + PORT + "!"));
