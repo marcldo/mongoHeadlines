@@ -22,12 +22,13 @@ app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
 
 // app.use(logger("dev"));
-
+//make public directory
+app.use(express.static(__dirname + '/public'));
 //parse request body as JSON
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-//make public directory
-app.use(express.static("public"));
+
+
 
 // connect to mongo db
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
@@ -96,6 +97,20 @@ app.post("/jobs/:id", (req, res) => {
         .then(dbJob => res.json(dbJob))
         .catch(err => res.json(err));
 });
+
+//save job
+app.get("/save/:id", (req, res) => {
+    console.log("route" + req.params.id)
+    db.Job.updateOne({ _id: req.params.id }, { $set: { saved: true } })
+        .then(savedJob => console.log(savedJob))
+        .catch(err => res.json(err));
+});
+
+app.get("/saved", (req, res) => {
+    db.Job.find({ saved: true })
+        .then(savedJobs => res.render("saved", { jobs: savedJobs }))
+        .catch(err => res.json(err))
+})
 
 //Start the server
 app.listen(PORT, () => console.log("App running on port " + PORT + "!"));
