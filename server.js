@@ -16,6 +16,11 @@ const db = require("./models");
 //initialize express
 const app = express();
 
+const exphbs = require('express-handlebars');
+
+app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
+app.set('view engine', 'handlebars');
+
 // app.use(logger("dev"));
 
 //parse request body as JSON
@@ -29,6 +34,12 @@ const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlin
 mongoose.connect(MONGODB_URI);
 
 //routes
+
+app.get("/", (req, res) => {
+    db.Job.find({})
+        .then(dbJobs => { res.render("index", { jobs: dbJobs }); console.log(dbJobs) })
+        .catch(err => res.json(err));
+})
 
 //GET route for scraping indeed software developer jobs in ontario
 app.get("/scrape", (req, res) => {
@@ -56,6 +67,7 @@ app.get("/scrape", (req, res) => {
         res.send("Scrape Complete");
     });
 });
+
 
 
 
