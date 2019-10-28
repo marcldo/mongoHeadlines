@@ -1,16 +1,5 @@
 <h4>Saved Jobs</h4>
 
-{{!-- <ul>
-    {{#each jobs}}
-    <a href="{{link}}">{{title}}</a>
-    <li>{{company}}</li>
-    <li>{{summary}}</li>
-    <button class="add-note" data-id="{{_id}}" data-traget="modal1">Add Note</button>
-
-    <button class="delete" data-id="{{_id}}">Delete</button>
-    {{/each}}
-</ul> --}}
-
 <div class="row">
     <div class="col s12 m12">
         {{#each jobs}}
@@ -22,6 +11,7 @@
                     <p>{{summary}}</p>
                 </div>
                 <div class="card-action">
+                    {{!-- modal trigger --}}
                     <a class="waves-effect waves-light btn modal-trigger add-note amber" href="#modal1"
                         data-id="{{_id}}">Add
                         Note</a>
@@ -34,8 +24,6 @@
     </div>
 
 </div>
-
-<!-- Modal Trigger -->
 
 
 <!-- Modal Structure -->
