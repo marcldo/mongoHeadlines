@@ -1,7 +1,8 @@
 $(document).ready(function () {
-    // init modal and paralax
+    // init modal side nav and paralax
     $('#modal1').modal();
     $('.parallax').parallax();
+    $('.sidenav').sidenav();
 
     //scrape jobs
     $(".scrape-new").on("click", () => {
