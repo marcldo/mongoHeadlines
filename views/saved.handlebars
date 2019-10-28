@@ -1,11 +1,63 @@
 <h4>Saved Jobs</h4>
 
-<ul>
+{{!-- <ul>
     {{#each jobs}}
     <a href="{{link}}">{{title}}</a>
     <li>{{company}}</li>
     <li>{{summary}}</li>
-    <button class="add-note" data-id="{{_id}}">Add Note</button>
+    <button class="add-note" data-id="{{_id}}" data-traget="modal1">Add Note</button>
+
     <button class="delete" data-id="{{_id}}">Delete</button>
     {{/each}}
-</ul>
+</ul> --}}
+
+<div class="row">
+    <div class="col s12 m12">
+        {{#each jobs}}
+        <a href="{{link}}" target="_blank">
+            <div class="card blue darken-4">
+                <div class="card-content white-text">
+                    <span class="card-title">{{title}}</span>
+                    <p>{{company}}</p>
+                    <p>{{summary}}</p>
+                </div>
+                <div class="card-action">
+                    <a class="waves-effect waves-light btn modal-trigger add-note amber" href="#modal1"
+                        data-id="{{_id}}">Add
+                        Note</a>
+                    <a class="waves-effect waves-light btn delete amber" href="/saved" data-id="{{_id}}">Delete</a>
+                </div>
+            </div>
+
+        </a>
+        {{/each}}
+    </div>
+
+</div>
+
+<!-- Modal Trigger -->
+
+
+<!-- Modal Structure -->
+<div id="modal1" class="modal modal-fixed-footer">
+    <div class="modal-content">
+        <h4>Add New Note</h4>
+        <div class="input-field col s12">
+            <input id="title" type="text" class="validate">
+            <label for="title">Title</label>
+        </div>
+        <div class="input-field col s12">
+            <textarea id="body" class="materialize-textarea"></textarea>
+            <label for="body">Message</label>
+        </div>
+
+        <ul class="collection with-header">
+
+        </ul>
+
+    </div>
+    <div class="modal-footer">
+        <a href="#!" onclick="M.toast({html: 'Saved'})" class="modal-close waves-effect waves-green btn-flat"
+            id="save-note" data-id="">Save</a>
+    </div>
+</div>

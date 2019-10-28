@@ -1,10 +1,33 @@
 <h4>Jobs</h4>
 
-<ul>
+{{!-- <ul>
     {{#each jobs}}
     <a href="{{link}}">{{title}}</a>
     <li>{{company}}</li>
     <li>{{summary}}</li>
     <button class="save" data-id="{{_id}}">Save</button>
     {{/each}}
-</ul>
+</ul> --}}
+
+
+<div class="row">
+    <div class="col s12 m12">
+        {{#each jobs}}
+        <a href="{{link}}" target="_blank">
+            <div class="card blue darken-4">
+                <div class="card-content white-text">
+                    <span class="card-title">{{title}}</span>
+                    <p>{{company}}</p>
+                    <p>{{summary}}</p>
+                </div>
+                <div class="card-action">
+                    <a href="#" class="save text-amber" data-id="{{_id}}" onclick="M.toast({html: 'Saved'})">Save</a>
+                    <a href="{{link}}" target="_blank" class="text-amber">More Details</a>
+                </div>
+            </div>
+
+        </a>
+        {{/each}}
+    </div>
+
+</div>

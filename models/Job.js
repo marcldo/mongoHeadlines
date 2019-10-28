@@ -23,10 +23,12 @@ const JobSchema = new Schema({
     saved: {
         type: Boolean
     },
-    note: {
-        type: Schema.Types.ObjectId,
-        ref: "Note"
-    }
+    note: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Note"
+        }
+    ]
 });
 
 const Job = mongoose.model("Job", JobSchema);

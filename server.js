@@ -61,7 +61,7 @@ app.get("/scrape", (req, res) => {
 
             // Create a new Job using the `result` object built from scraping
             db.Job.create(result)
-                .then(dbJob => res.json(dbJob))
+                .then(dbJob => res.status(200))
                 .catch(err => console.log(err));
 
         });
@@ -94,7 +94,7 @@ app.get("/jobs/:id", (req, res) => {
 app.post("/jobs/:id", (req, res) => {
     //create a new note and pass the req.body to the entry
     db.Note.create(req.body)
-        .then(dbNote => db.Job.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true }))
+        .then(dbNote => db.Job.findOneAndUpdate({ _id: req.params.id }, { $push: { note: dbNote._id } }, { new: true }))
         .then(dbJob => res.json(dbJob))
         .catch(err => res.json(err));
 });
@@ -103,13 +103,22 @@ app.post("/jobs/:id", (req, res) => {
 app.get("/save/:id", (req, res) => {
     console.log("saved " + req.params.id)
     db.Job.updateOne({ _id: req.params.id }, { $set: { saved: true } })
-        .then(savedJob => console.log(savedJob))
+        .then(() => M.toast({ html: 'Saved' }))
         .catch(err => res.json(err));
 });
+
 //delete saved job
 app.get("/delete-saved/:id", (req, res) => {
     console.log("delete " + req.params.id)
     db.Job.updateOne({ _id: req.params.id }, { $set: { saved: false } })
+        .then(savedJob => console.log(savedJob))
+        .catch(err => res.json(err));
+});
+
+//delete note
+app.get("/delete-note/:id", (req, res) => {
+    console.log("delete " + req.params.id)
+    db.Note.remove({ _id: req.params.id }, { $set: { saved: false } })
         .then(savedJob => console.log(savedJob))
         .catch(err => res.json(err));
 });
